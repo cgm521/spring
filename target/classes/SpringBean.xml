@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="helloBean" class="com.shiyanlou.dome.helloworld.HelloWorld">
+        <property name="name" value="shiyanlou"/>
+    </bean>
+    <bean id="helloBean1" class="com.shiyanlou.dome.helloworld.HelloWorld"
+          p:name="shiyanlou1"/>
+
+    <!--在 Customer 的 Bean 中声明一个内部 Bean-->
+    <bean id="CustomerBean1" class="com.shiyanlou.spring.innerBean.Customer">
+        <property name="person">
+            <bean class="com.shiyanlou.spring.innerBean.Person">
+                <property name="name" value="大明"/>
+                <property name="arg" value="23"/>
+                <property name="address" value="上海"/>
+            </bean>
+        </property>
+    </bean>
+    <!--内部Bean也可以通过构造函数注入-->
+    <!--singleton — 单例模式，由 IOC 容器返回一个唯一的 bean 实例。
+        prototype — 原型模式，被请求时，每次返回一个新的 bean 实例。-->
+    <bean id="CustomerBean" class="com.shiyanlou.spring.innerBean.Customer" scope="prototype">
+        <constructor-arg>
+            <bean id="Person" class="com.shiyanlou.spring.innerBean.Person">
+                <property name="address" value="北京"/>
+                <property name="arg" value="21"/>
+                <property name="name" value="小明"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+</beans>
