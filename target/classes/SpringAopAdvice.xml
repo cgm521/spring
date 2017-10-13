@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="customerService" class="com.shiyanlou.spring.SpringAop.aop.advice.CustomerService">
+        <property name="name" value="shiyanlou"/>
+        <property name="url" value="www.123.com"/>
+    </bean>
+
+    <bean id="hiBeforeMethodBean" class="com.shiyanlou.spring.SpringAop.aop.advice.HiBeforeMethod"/>
+    <bean id="hiAroundMethodBean" class="com.shiyanlou.spring.SpringAop.aop.advice.HiAroundMethod"/>
+
+    <!--拦截器-->
+    <bean id="customerServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="targetName" value="customerService"/>
+        <property name="interceptorNames">
+            <list>
+                <idref bean="customerAdvisorRegexp"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--拦截器 切入点 按方法名称-->
+    <bean id="customerAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+        <property name="mappedName" value="printName"/>
+        <property name="advice" ref="hiAroundMethodBean"/>
+    </bean>
+
+    <!--正则-->
+    <bean id="customerAdvisorRegexp" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="patterns">
+            <list>
+                <value>.*Url.*</value>
+            </list>
+        </property>
+        <property name="advice" ref="hiAroundMethodBean"/>
+    </bean>
+</beans>
