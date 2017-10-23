@@ -7,9 +7,17 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--自动扫描组件-->
+    <!--自动扫描组件 component-scan-->
     <context:component-scan base-package="com.shiyanlou.spring">
+        <!-- include-filter 和注解@Service等 必须一种-->
         <context:include-filter type="regex" expression="com.shiyanlou.spring.springAuto.dao.*Dao.*"/>
         <context:include-filter type="regex" expression="com.shiyanlou.spring.springAuto.services.*Services.*"/>
+
+        <!--服务层自动依赖注入-->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+
+        <!--Dao层依赖注入-->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+
     </context:component-scan>
 </beans>

@@ -9,7 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class App {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "SpringAOPAdvice.xml" });
-        CustomerService customerService = (CustomerService) context.getBean("customerServiceProxy");
+        CustomerService customerService = (CustomerService) context.getBean("customerService");
         System.out.println("--------------");
         customerService.printName();
         System.out.println("--------------");

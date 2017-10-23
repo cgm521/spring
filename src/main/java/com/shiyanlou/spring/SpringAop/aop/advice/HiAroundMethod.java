@@ -10,11 +10,13 @@ import java.util.Arrays;
  * Created by cgm on 2017/10/12.
  */
 public class HiAroundMethod implements MethodInterceptor {
+    @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         System.out.println("Method Name:" + methodInvocation.getMethod().getName());
         System.out.println("Method arguments :"+ Arrays.toString(methodInvocation.getArguments()));
         try {
             System.out.println("HiAroundMethod Before");
+            //方法执行
             Object proceed = methodInvocation.proceed();
 
             System.out.println("HiAroundMethod afert");
