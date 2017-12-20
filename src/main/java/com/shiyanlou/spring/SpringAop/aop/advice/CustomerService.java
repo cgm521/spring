@@ -26,4 +26,12 @@ public class CustomerService {
     public void printThrowException() {
         throw new IllegalArgumentException();
     }
+
+    @Override
+    public String toString() {
+        return "CustomerService{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

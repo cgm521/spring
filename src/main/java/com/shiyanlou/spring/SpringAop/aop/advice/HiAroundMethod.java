@@ -19,6 +19,7 @@ public class HiAroundMethod implements MethodInterceptor {
             //方法执行
             Object proceed = methodInvocation.proceed();
 
+
             System.out.println("HiAroundMethod afert");
             return proceed;
         } catch (IllegalArgumentException e) {
