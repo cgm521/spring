@@ -1,6 +1,6 @@
 package com.shiyanlou.jdbc;
 
-import com.shiyanlou.jdbc.Dao.UserDao2;
+import com.shiyanlou.jdbc.Dao.UserDao;
 import com.shiyanlou.jdbc.bean.user;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,9 +49,21 @@ public class UserDaoImplTest {
     public void findUserById() throws Exception {
 
         //根据session获取 UserMapper接口
-        UserDao2 userDao = session.getMapper(UserDao2.class);
+        UserDao userDao = session.getMapper(UserDao.class);
         user user = userDao.findUserById(1);
-        System.out.println(user);
+        //执行同样的sql，在一级缓存sqlsession中查找，找到就不再执行sql
+        System.out.println("2 "+user);
+
+    }
+
+    @Test
+    public void findUserById2() throws Exception {
+
+        //根据session获取 UserMapper接口
+        UserDao userDao = session.getMapper(UserDao.class);
+        user user = userDao.findUserById(1);
+        //执行同样的sql，在一级缓存sqlsession中查找，找到就不再执行sql
+        System.out.println("2 "+user);
 
     }
 
@@ -76,6 +89,52 @@ public class UserDaoImplTest {
         int insert = session.insert(statement, user);
         session.commit();
         System.out.println("insert" + user.getId());
+    }
+
+    @Test
+    public void updateUser() {
+        String statement = "update";
+        user user = new user();
+        user.setId(1);
+        user.setName("bobo2");
+        int update = session.update(statement, user);
+        session.commit();
+        System.out.println(update);
+    }
+
+
+    /**
+     * choose选择第一个满足when条件的
+     */
+    @Test
+    public void findUserByChoose() {
+        String statement = "findUserByChoose";
+        user user = new user();
+        user.setId(2);
+        user.setName("body");
+        List<user> list = session.selectList(statement, user);
+        session.commit();
+        list.forEach(System.out::println);
+    }
+
+    @Test
+    public void finUserByIds() {
+        String statement = "finUserByIds";
+        List<Object> ids = new ArrayList<>();
+        ids.add(1);
+        ids.add(2);
+        ids.add(3);
+        Object[] array = ids.toArray();
+        List<user> list = session.selectList(statement,array);
+        session.commit();
+        list.forEach(System.out::println);
+    }
+
+    @Test
+    public void findUserAndOrderById() {
+        UserDao userDao = session.getMapper(UserDao.class);
+        user user = userDao.findUserAndOrderById(1);
+        System.out.println(user);
     }
     @After
     public void close() {

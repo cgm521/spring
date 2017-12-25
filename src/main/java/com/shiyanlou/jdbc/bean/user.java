@@ -1,14 +1,37 @@
 package com.shiyanlou.jdbc.bean;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * @author cgm
  * @date 2017/12/20.
  */
-public class user {
+public class user implements Serializable{
     private int id;
     private String name;
     private int age;
     private String birth;
+    private List<order> orders;
+
+    @Override
+    public String toString() {
+        return "user{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", birth='" + birth + '\'' +
+                ", orders=" + orders +
+                '}';
+    }
+
+    public List<order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<order> orders) {
+        this.orders = orders;
+    }
 
     public int getId() {
         return id;
@@ -42,13 +65,4 @@ public class user {
         this.birth = birth;
     }
 
-    @Override
-    public String toString() {
-        return "user{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", birth='" + birth + '\'' +
-                '}';
-    }
 }

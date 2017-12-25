@@ -8,5 +8,8 @@ import com.shiyanlou.jdbc.bean.user;
  * 基于xml
  */
 public interface UserDao {
+
     user findUserById(int id);
+
+    user findUserAndOrderById(int id);
 }

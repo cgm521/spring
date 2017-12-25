@@ -4,11 +4,38 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+    <!--
+    configuration 中的元素，不但有类型限制，也有顺序限制
+    (properties?,settings?,typeAliases?,typeHandlers?,objectFactory?,objectWrapperFactory?,plugins?,environments?,databaseIdProvider?,mappers?)
+    -->
 
+    <properties resource="jdbc.properties">
+        <!--不起作用，读取时先获取property的值，如果jdbc.properties有相应的值，则会获取，覆盖之前的值-->
+        <property name="pasword" value="123"/>
+    </properties>
     <settings>
+
         <!--当返回行的所有列都是空时，MyBatis默认返回null-->
         <setting name="returnInstanceForEmptyRow" value="true"/>
+        <!--开启懒加载-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <!--开启二级缓存  commit操作清缓存-->
+        <!--开启了二级缓存后，还需要将要缓存的pojo实现Serializable接口，
+        为了将缓存数据取出执行反序列化操作，因为二级缓存数据存储介质多种多样，
+        不一定只存在内存中，有可能存在硬盘中，如果我们要再取这个缓存的话，
+        就需要反序列化了。所以mybatis中的pojo都去实现Serializable接口。-->
+        <setting name="cacheEnabled" value="true"/>
     </settings>
+
+    <!-- 定义别名 -->
+    <typeAliases>
+        <!--给单个实体定义别名-->
+        <typeAlias type="com.shiyanlou.jdbc.bean.user" alias="user"/>
+        <!-- mybatis自动扫描包中的po类，自动定义别名，别名是类名(首字母大写或小写都可以,一般用小写) -->
+        <package name="com.shiyanlou.jdbc.bean"/>
+    </typeAliases>
 
     <environments default="development">
 
@@ -17,17 +44,20 @@
             <transactionManager type="JDBC"/>
             <!--使用数据池，复用实例-->
             <dataSource type="POOLED">
-                <property name="driver" value="org.postgresql.Driver"/>
-                <property name="url" value="jdbc:postgresql://localhost:5432/myPg?useUnicode=true&amp;characterEncoding=utf8"/>
-                <property name="username" value="postgres"/>
-                <property name="password" value="cgm"/>
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
             </dataSource>
         </environment>
     </environments>
 
-    <mappers>
 
+    <mappers>
         <mapper resource="UserDaoImplMapper.xml"/>
-        <mapper class="com.shiyanlou.jdbc.Dao.UserDao2"/>
+        <mapper resource="orderDaoMapper.xml"/>
+        <!--批量加载mapper
+          指定 mapper 接口的包名，mybatis自动扫描包下的mapper接口进行加载-->
+        <!--<package name="com.shiyanlou.jdbc.Dao"/>-->
     </mappers>
 </configuration>

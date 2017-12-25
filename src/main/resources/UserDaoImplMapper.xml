@@ -2,12 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shiyanlou.jdbc.Dao.UserDao">
 
-    <select id="findUserById" resultType="com.shiyanlou.jdbc.bean.user">
+    <!--开启二级缓存  -->
+    <cache></cache>
+
+    <select id="findUserById" resultType="com.shiyanlou.jdbc.bean.user" parameterType="int">
         SELECT * FROM bas_user WHERE id = #{id}
     </select>
 
 
-    <select id="findUser" resultType="com.shiyanlou.jdbc.bean.user">
+    <select id="findUser" resultType="com.shiyanlou.jdbc.bean.user" >
         SELECT * FROM bas_user
     </select>
 
@@ -23,4 +26,58 @@
         #{birth}
         )
     </insert>
+
+    <update id="update" parameterType="user">
+        UPDATE bas_user u
+        <set>
+            <if test="null != name">
+                name = #{name},
+            </if>
+            <if test="null !=age">
+                age = #{age}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <select id="findUserByChoose" resultType="user">
+        select * from bas_user
+        <where>
+            <choose>
+                <when test="null != name and '' != name">
+                    name = #{name}
+                </when>
+                <when test="null !=id and id != ''">
+                    id=#{id}
+                </when>
+            </choose>
+        </where>
+    </select>
+    <select id="finUserByIds" resultType="user">
+        select * from bas_user
+        <where>
+            1=1
+            <foreach collection="array" item="id" open="and id in (" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+
+    <select id="findUserAndOrderById" resultMap="getUserAndOrder">
+        select * from bas_user u , bas_order o WHERE u.id = o.user_id AND u.id = #{id}
+    </select>
+
+    <resultMap id="getUserAndOrder" type="user">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="birth" property="birth"/>
+
+        <collection property="orders" ofType="order">
+            <id column="id" property="id"/>
+            <result column="user_id" property="userId"/>
+            <result column="number" property="number"/>
+        </collection>
+    </resultMap>
 </mapper>
