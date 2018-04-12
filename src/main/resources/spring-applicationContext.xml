@@ -13,8 +13,10 @@
     <!--加载配置文件 获取数据库连接参数-->
     <context:property-placeholder location="jdbc.properties"/>
 
+    <context:component-scan base-package="com.shiyanlou.jdbc.Dao"/>
+
     <!--配置数据源-->
-    <bean id="dataSource" class="${dataSource}" destroy-method="close">
+    <bean id="pGdataSource" class="${dataSource}" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driver}"/>
         <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${jdbc.username}"/>
@@ -22,13 +24,48 @@
         <property name="maxActive" value="10" />
         <property name="maxIdle" value="5" />
     </bean>
+
+    <bean id="mysqldataSource" class="${dataSource}" destroy-method="close">
+        <property name="driverClassName" value="${mysql.driver}"/>
+        <property name="url" value="${mysql.url}"/>
+        <property name="username" value="${mysql.username}"/>
+        <property name="password" value="${mysql.password}"/>
+        <property name="maxActive" value="10" />
+        <property name="maxIdle" value="5" />
+    </bean>
+
+    <bean id="dataSource" class="com.shiyanlou.jdbc.dataSource.DataSources">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry value-ref="mysqldataSource" key="MYSQL"></entry>
+                <entry value-ref="pGdataSource" key="PG"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="pGdataSource"></property>
+    </bean>
+
+    <bean id="vendorProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="postgresql">pGdataSource</prop>
+                <prop key="MySQL">mysqldataSource</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
+        <property name="properties" ref="vendorProperties" />
+    </bean>
+
     <!--配置SQLSessionFactory-->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!--加载全局的myBatis配置文件-->
         <property name="configLocation" value="Mybatis-config.xml"/>
         <!--加载数据源-->
         <property name="dataSource" ref="dataSource"/>
-
+        <property name="databaseIdProvider" ref="databaseIdProvider"/>
+        <property name="mapperLocations" value="classpath*:/*Mapper.xml" />
     </bean>
 
      <!--MapperFactoryBean：根据mapper接口生成的代理对象
